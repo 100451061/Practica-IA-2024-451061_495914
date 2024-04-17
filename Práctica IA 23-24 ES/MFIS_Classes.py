@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 class FuzzySetsDict(dict):
-
     def printFuzzySetsDict(self):
         for elem in self:
             print("setid:     ", elem)

@@ -53,3 +53,5 @@ class Application:
         for elem in self.data:
             print(elem[0], " is ", elem[1])
         print()
+
+

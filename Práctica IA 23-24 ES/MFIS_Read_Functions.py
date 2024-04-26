@@ -38,8 +38,8 @@ def readFuzzySetsFile(fleName):
     return fuzzySetsDict
 
 
-def readRulesFile():
-    inputFile = open('Files/Rules.txt', 'r')
+def readRulesFile(filePath):
+    inputFile = open(filePath, 'r')
     rules = RuleList()
     line = inputFile.readline()
     while line != '':
@@ -49,7 +49,7 @@ def readRulesFile():
         rule.ruleName = elementsList[0]
         rule.consequent = elementsList[1]
         lhs = []
-        for i in range(2, len(elementsList), 1):
+        for i in range(2, len(elementsList)):
             lhs.append(elementsList[i])
         rule.antecedent = lhs
         rules.append(rule)
@@ -73,3 +73,15 @@ def readApplicationsFile():
         line = inputFile.readline()
     inputFile.close()
     return applicationList
+
+
+if __name__ == '__main__':
+    # Cargar los conjuntos borrosos desde el archivo InputVarSets.txt
+    fuzzy_sets = readFuzzySetsFile('InputVarSets.txt')
+    print("Fuzzy Sets Loaded:")
+    fuzzy_sets.printFuzzySetsDict()
+
+    # Cargar las reglas desde el archivo Rules.txt
+    rules = readRulesFile('Rules.txt')
+    print("Reglas cargadas:")
+    rules.printRuleList()

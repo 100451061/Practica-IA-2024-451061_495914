@@ -81,42 +81,45 @@ def readApplicationsFile():
 # Por lo tanto solo cojo un trozo de la función no sé si vale
 
 def inputs2():
-    Age = ctrl.Antecedent(np.arange(0, 101, 1), "Age")
-    IncomeLevel = ctrl.Antecedent(np.arange(0, 151, 1), "IncomeLevel")
-    Assets = ctrl.Antecedent(np.arange(0, 51, 1), "Assets")
-    Amount = ctrl.Antecedent(np.arange(0, 9, 1), "Amount")
-    Job = ctrl.Antecedent(np.arange(0, 6, 1), "Job")
-    History = ctrl.Antecedent(np.arange(0, 7, 1), "History")
+    age = ctrl.Antecedent(np.arange(0, 101, 1), "Age")
+    income_level = ctrl.Antecedent(np.arange(0, 151, 1), "IncomeLevel")
+    assets = ctrl.Antecedent(np.arange(0, 51, 1), "Assets")
+    amount = ctrl.Antecedent(np.arange(0, 9, 1), "Amount")
+    job = ctrl.Antecedent(np.arange(0, 6, 1), "Job")
+    history = ctrl.Antecedent(np.arange(0, 7, 1), "History")
     # Tambien puedo lista=[] voy añadiendo los que no aparece en la lista y luego
     # ejecuto la parte de abajo ir dibujando la gráfica si me dan un fichero y
     # no sé los inputs
 
-    """{'Age=Young': <MFIS_Classes.FuzzySet object at 0x000001EC34266F10>"""
+    "{'Age=Young': <MFIS_Classes.FuzzySet object at 0x000001EC34266F10>"
     diccionario = readFuzzySetsFile("InputVarSets.txt")
     # Creo cada una de las gráficas
-    for variables in diccionario.values():
-        if variables.var == "Age":
-            Age[str(variables.label)] = np.interp(Age.universe, variables.x, variables.y)
-        if variables.var == "IncomeLevel":
-            IncomeLevel[str(variables.label)] = np.interp(IncomeLevel.universe, variables.x, variables.y)
-        if variables.var == "Assets":
-            Assets[str(variables.label)] = np.interp(Assets.universe, variables.x, variables.y)
-        if variables.var == "Amount":
-            Amount[str(variables.label)] = np.interp(Amount.universe, variables.x, variables.y)
-        if variables.var == "Job":
-            Job[str(variables.label)] = np.interp(Job.universe, variables.x, variables.y)
-        if variables.var == "History":
-            History[str(variables.label)] = np.interp(History.universe, variables.x, variables.y)
+    for valor in diccionario.values():
+        print(f"Antecedente: {valor.var} - Etiqueta: {valor.label}")
+        if valor.var == "Age":
+            age[str(valor.label)] = np.interp(age.universe, valor.x, valor.y)
+        elif valor.var == "IncomeLevel":
+            income_level[str(valor.label)] = np.interp(income_level.universe, valor.x, valor.y)
+        elif valor.var == "Assets":
+            assets[str(valor.label)] = np.interp(assets.universe, valor.x, valor.y)
+        elif valor.var == "Amount":
+            amount[str(valor.label)] = np.interp(amount.universe, valor.x, valor.y)
+        elif valor.var == "Job":
+            job[str(valor.label)] = np.interp(job.universe, valor.x, valor.y)
+        elif valor.var == "History":
+            history[str(valor.label)] = np.interp(history.universe, valor.x, valor.y)
 
 
 def outputs2():
     diccionario = readFuzzySetsFile("Risks.txt")
-    Risk = ctrl.Consequent(np.arange(0, 101, 1), "Risk")
+    risk = ctrl.Consequent(np.arange(0, 101, 1), "Risk")
 
     for variables in diccionario.values():
-        Risk[str(variables.label)] = np.interp(Risk.universe, variables.x, variables.y)
+        print(f"Consecuente: {variables.var} - Etiqueta: {variables.label}")
 
-    Risk.view()
+        risk[str(variables.label)] = np.interp(risk.universe, variables.x, variables.y)
+
+    risk.view()
     plt.show()
 
 

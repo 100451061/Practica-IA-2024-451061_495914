@@ -1,10 +1,41 @@
 #!/usr/bin/env python3
-import matplotlib.pyplot as plt
 import numpy as np
 import skfuzzy as skf
-from skfuzzy import control as ctrl
 
 from MFIS_Classes import *
+
+
+class FuzzySet:
+    def __init__(self):
+        self.var = ""
+        self.label = ""
+        self.x = []
+        self.y = []
+
+
+class FuzzySetsDict(dict):
+    def printFuzzySetsDict(self):
+        for var_set, value in self.items():
+            print(f"Set ID: {var_set} - Var: {value.var} - Label: {value.label} - X: {value.x} - Y: {value.y}")
+
+
+class Rule:
+    def __init__(self):
+        self.ruleName = ""
+        self.antecedent = []
+        self.consequent = ""
+
+
+class RuleList(list):
+    def printRuleList(self):
+        for rule in self:
+            print(f"Rule Name: {rule.ruleName} - Antecedent: {rule.antecedent} - Consequent: {rule.consequent}")
+
+
+class Application:
+    def __init__(self):
+        self.appId = ""
+        self.data = []
 
 
 def readFuzzySetsFile(fleName):
@@ -61,7 +92,7 @@ def readRulesFile(filePath):
 
 
 def readApplicationsFile():
-    inputFile = open('Files/Applications.txt', 'r')
+    inputFile = open('Applications.txt', 'r')
     applicationList = []
     line = inputFile.readline()
     while line != '':
@@ -77,62 +108,53 @@ def readApplicationsFile():
     return applicationList
 
 
-# Al invocar la función los valores de x me hacen muy grandes hasta 100
-# Por lo tanto solo cojo un trozo de la función no sé si vale
-
-def inputs2():
-    age = ctrl.Antecedent(np.arange(0, 101, 1), "Age")
-    income_level = ctrl.Antecedent(np.arange(0, 151, 1), "IncomeLevel")
-    assets = ctrl.Antecedent(np.arange(0, 51, 1), "Assets")
-    amount = ctrl.Antecedent(np.arange(0, 9, 1), "Amount")
-    job = ctrl.Antecedent(np.arange(0, 6, 1), "Job")
-    history = ctrl.Antecedent(np.arange(0, 7, 1), "History")
-    # Tambien puedo lista=[] voy añadiendo los que no aparece en la lista y luego
-    # ejecuto la parte de abajo ir dibujando la gráfica si me dan un fichero y
-    # no sé los inputs
-
-    "{'Age=Young': <MFIS_Classes.FuzzySet object at 0x000001EC34266F10>"
-    diccionario = readFuzzySetsFile("InputVarSets.txt")
-    # Creo cada una de las gráficas
-    for valor in diccionario.values():
-        print(f"Antecedente: {valor.var} - Etiqueta: {valor.label}")
-        if valor.var == "Age":
-            age[str(valor.label)] = np.interp(age.universe, valor.x, valor.y)
-        elif valor.var == "IncomeLevel":
-            income_level[str(valor.label)] = np.interp(income_level.universe, valor.x, valor.y)
-        elif valor.var == "Assets":
-            assets[str(valor.label)] = np.interp(assets.universe, valor.x, valor.y)
-        elif valor.var == "Amount":
-            amount[str(valor.label)] = np.interp(amount.universe, valor.x, valor.y)
-        elif valor.var == "Job":
-            job[str(valor.label)] = np.interp(job.universe, valor.x, valor.y)
-        elif valor.var == "History":
-            history[str(valor.label)] = np.interp(history.universe, valor.x, valor.y)
+def applyRules(rules, inputs):
+    output = {}
+    for rule in rules:
+        match = True
+        for antecedent in rule.antecedent:
+            var, value = antecedent.split('=')
+            if inputs.get(var) != str(value):  # Corregimos aquí para comparar strings
+                match = False
+                break
+        if match:
+            output[rule.ruleName] = True
+    return output
 
 
-def outputs2():
-    diccionario = readFuzzySetsFile("Risks.txt")
-    risk = ctrl.Consequent(np.arange(0, 101, 1), "Risk")
+def process_applications(applications, rules):
+    results = []
+    for app in applications:
+        inputs = {}  # Construir un diccionario de entradas para esta solicitud
+        for data_item in app.data:
+            inputs[data_item[0]] = data_item[1]
 
-    for variables in diccionario.values():
-        print(f"Consecuente: {variables.var} - Etiqueta: {variables.label}")
+        matched_rules = applyRules(rules, inputs)  # Aplicar las reglas al conjunto de entradas
 
-        risk[str(variables.label)] = np.interp(risk.universe, variables.x, variables.y)
-
-    risk.view()
-    plt.show()
+        # Agregar los resultados de esta solicitud a la lista de resultados
+        results.append({
+            'App ID': app.appId,
+            'Matched Rules': matched_rules
+        })
+    return results
 
 
 if __name__ == '__main__':
-    # Cargar los conjuntos borrosos desde el archivo InputVarSets.txt
-    # fuzzy_sets = readFuzzySetsFile('InputVarSets.txt')
-    # print("Fuzzy Sets Loaded:")
-    # fuzzy_sets.printFuzzySetsDict()
+    # Leer las solicitudes del archivo Applications.txt
+    applications = readApplicationsFile()
 
     # Cargar las reglas desde el archivo Rules.txt
-    # rules = readRulesFile('Rules.txt')
-    # print("Reglas cargadas:")
-    # rules.printRuleList()
+    rules = readRulesFile('Rules.txt')
 
-    inputs2()
-    outputs2()
+    # Procesar las solicitudes y obtener los resultados
+    results = process_applications(applications, rules)
+
+    # Escribir los resultados en un nuevo archivo
+    with open('Results.txt', 'w') as f:
+        for result in results:
+            f.write(f"Application ID: {result['App ID']}\n")
+            f.write("Matched Rules:\n")
+            for rule_name, matched in result['Matched Rules'].items():
+                if matched:
+                    f.write(f"- Rule {rule_name}: Activated\n")
+            f.write("\n")

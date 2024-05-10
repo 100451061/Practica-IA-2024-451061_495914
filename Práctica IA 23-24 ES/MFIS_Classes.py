@@ -1,55 +1,53 @@
 #!/usr/bin/env python3
-class FuzzySetsDict(dict):
-    def printFuzzySetsDict(self):
-        for elem in self:
-            print("setid:     ", elem)
-            self[elem].printSet()
 
 
 class FuzzySet:
-    var = ""  # variable of the fuzzy set (ex.: Age)
-    label = ""  # label of the specific fuzzy set (ex.: Young)
-    x = []  # list of abscissas, from xmin to xmax, 1 by 1
-    y = []  # list of ordinates (float)
-    memDegree = 0  # membership degree for the current application
+    def __init__(self, variable, label, x, y):
+        self.variable = variable  # Nombre de la variable, ej. 'Age', 'IncomeLevel'
+        self.label = label  # Etiqueta del conjunto borroso, ej. 'Young', 'High'
+        self.x = x  # Rango de valores de x (universo de discurso)
+        self.y = y  # Valores de membresía asociados a x
 
     def printSet(self):
-        print("var:       ", self.var)
-        print("label:     ", self.label)
-        # print("x coord:   ", self.x)
-        # print("y coord:   ", self.y)
-        print("memDegree: ", self.memDegree)
-        print()
+        print("Variable:  ", self.variable)
+        print("Label:     ", self.label)
+        print("x coord:   ", self.x)
+        print("y coord:   ", self.y)
+
+
+class FuzzySetsDict(dict):
+    def printFuzzySetsDict(self):
+        for set_id, fuzzy_set in self.items():
+            print("Set ID:    ", set_id)
+            fuzzy_set.printSet()
+
+
+class Rule:
+    def __init__(self, rule_name, consequent, antecedents, strength=1.0):
+        self.rule_name = rule_name  # Name of the rule
+        self.consequent = consequent  # Consequent of the rule (only one set ID)
+        self.antecedents = antecedents  # List of antecedents (set IDs)
+        self.strength = strength  # Strength of the rule (used in rule evaluation)
+
+    def printRule(self):
+        print("Rule Name: ", self.rule_name)
+        print("IF        ", self.antecedents)
+        print("THEN      ", self.consequent)
+        print("Strength: ", self.strength)
 
 
 class RuleList(list):
     def printRuleList(self):
-        for elem in self:
-            elem.printRule()
-
-
-class Rule:
-    ruleName = ""  # name of the rule (str)
-    antecedent = []  # list of setids
-    consequent = ""  # just one setid
-    strength = 0  # float
-    consequentX = []  # output fuzzySet, abscissas
-    consequentY = []  # output fuzzySet, ordinates
-
-    def printRule(self):
-        print("ruleName: ", self.ruleName)
-        print("IF        ", self.antecedent)
-        print("THEN      ", self.consequent)
-        print("strength: ", self.strength)
-        print()
+        for rule in self:
+            rule.printRule()
 
 
 class Application:
-    appId = ""  # application identifier (str)
-    data = []  # list of ValVarPair
+    def __init__(self, app_id, data):
+        self.app_id = app_id  # Application identifier
+        self.data = data  # List of (variable, value) pairs
 
     def printApplication(self):
-        print("App ID: ", self.appId)
-        for elem in self.data:
-            print(elem[0], " is ", elem[1])
-        print()
+        print("App ID: ", self.app_id)
+        for var, value in self.data:
+            print(f"{var} is {value}")

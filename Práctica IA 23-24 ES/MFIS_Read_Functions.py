@@ -22,10 +22,24 @@ def readFuzzySetsFile(fileName):
             elif len(points) == 4:
                 y = fuzz.trapmf(x, points)
             else:
-                raise ValueError(f"Incorrect number of points for membership function: {points}")
+                continue  # o manejar error
             fuzzySet = FuzzySet(variable, label, x, y)
             fuzzySetsDict[set_id] = fuzzySet
     return fuzzySetsDict
+
+
+def readRisksFile(fileName, variables):
+    with open(fileName, 'r') as file:
+        for line in file:
+            parts = line.strip().split(', ')
+            risk_name = parts[0].split('=')[1]
+            xmin = int(parts[1])
+            xmax = int(parts[2])
+            points = list(map(int, parts[3:]))
+            x = np.arange(xmin, xmax + 1)
+            y = fuzz.trapmf(x, points)
+            variables[risk_name] = FuzzySet(risk_name, x, y)  # Ajustado según la nueva definición
+    return variables
 
 
 def readRulesFile(fileName):

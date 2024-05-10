@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import numpy as np
 import skfuzzy as skf
 
@@ -108,8 +107,7 @@ def applyRules(rules, inputs):
         match = True
         for antecedent in rule.antecedent:
             var, value = antecedent.split('=')
-            print(f"Comparing input value: {inputs.get(var)} with rule condition: {value}")
-            if inputs.get(var) != str(value):
+            if inputs.get(var) != str(value):  # Corregimos aquí para comparar strings
                 match = False
                 break
         if match:
@@ -134,7 +132,7 @@ def process_applications(applications, rules):
     return results
 
 
-if __name__ == '__main__':
+def main():
     # Leer las solicitudes del archivo Applications.txt
     applications = readApplicationsFile()
 
@@ -142,14 +140,21 @@ if __name__ == '__main__':
     rules = readRulesFile('Rules.txt')
 
     # Procesar las solicitudes y obtener los resultados
-    results = process_applications(applications, rules)
-
+    open('Results.txt', 'w') as f:
+    for app in applications:
+        centroide = process_applications(app, rules)
+        f.write(app.id, centroide)
+    f.close()
     # Escribir los resultados en un nuevo archivo
     with open('Results.txt', 'w') as f:
         for result in results:
             f.write(f"Application ID: {result['App ID']}\n")
-            f.write("Matched Rules:\n")
+            f.write(f"Risk: {result}")
             for rule_name, matched in result['Matched Rules'].items():
                 if matched:
                     f.write(f"- Rule {rule_name}: Activated\n")
             f.write("\n")
+
+
+if __name__ == '__main__':
+    main()

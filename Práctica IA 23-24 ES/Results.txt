@@ -1,100 +1,150 @@
 Application ID: 0001
-Matched Rules: {'App ID': '0001', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0002
-Matched Rules: {'App ID': '0002', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0003
-Matched Rules: {'App ID': '0003', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0004
-Matched Rules: {'App ID': '0004', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0005
-Matched Rules: {'App ID': '0005', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0006
-Matched Rules: {'App ID': '0006', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0007
-Matched Rules: {'App ID': '0007', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0008
-Matched Rules: {'App ID': '0008', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0009
-Matched Rules: {'App ID': '0009', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0010
-Matched Rules: {'App ID': '0010', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0011
-Matched Rules: {'App ID': '0011', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0012
-Matched Rules: {'App ID': '0012', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0013
-Matched Rules: {'App ID': '0013', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0014
-Matched Rules: {'App ID': '0014', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0015
-Matched Rules: {'App ID': '0015', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0016
-Matched Rules: {'App ID': '0016', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0017
-Matched Rules: {'App ID': '0017', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0018
-Matched Rules: {'App ID': '0018', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0019
-Matched Rules: {'App ID': '0019', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0020
-Matched Rules: {'App ID': '0020', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0021
-Matched Rules: {'App ID': '0021', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0022
-Matched Rules: {'App ID': '0022', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0023
-Matched Rules: {'App ID': '0023', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0024
-Matched Rules: {'App ID': '0024', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0025
-Matched Rules: {'App ID': '0025', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0026
-Matched Rules: {'App ID': '0026', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0027
-Matched Rules: {'App ID': '0027', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0028
-Matched Rules: {'App ID': '0028', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0029
-Matched Rules: {'App ID': '0029', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0030
-Matched Rules: {'App ID': '0030', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0031
-Matched Rules: {'App ID': '0031', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0032
-Matched Rules: {'App ID': '0032', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0033
-Matched Rules: {'App ID': '0033', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0034
-Matched Rules: {'App ID': '0034', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0035
-Matched Rules: {'App ID': '0035', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0036
-Matched Rules: {'App ID': '0036', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0037
-Matched Rules: {'App ID': '0037', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0038
-Matched Rules: {'App ID': '0038', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0039
-Matched Rules: {'App ID': '0039', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0040
-Matched Rules: {'App ID': '0040', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0041
-Matched Rules: {'App ID': '0041', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0042
-Matched Rules: {'App ID': '0042', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0043
-Matched Rules: {'App ID': '0043', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0044
-Matched Rules: {'App ID': '0044', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0045
-Matched Rules: {'App ID': '0045', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0046
-Matched Rules: {'App ID': '0046', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0047
-Matched Rules: {'App ID': '0047', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0048
-Matched Rules: {'App ID': '0048', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0049
-Matched Rules: {'App ID': '0049', 'Matched Rules': {}}
+Risk: {}
+
 Application ID: 0050
-Matched Rules: {'App ID': '0050', 'Matched Rules': {}}
+Risk: {}
+

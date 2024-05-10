@@ -85,20 +85,21 @@ def readRulesFile(filePath):
 
 
 def readApplicationsFile():
-    inputFile = open('Applications.txt', 'r')
-    applicationList = []
-    line = inputFile.readline()
-    while line != '':
-        elementsList = line.split(', ')
-        app = Application()
-        app.appId = elementsList[0]
-        app.data = []
-        for i in range(1, len(elementsList), 2):
-            app.data.append([elementsList[i], int(elementsList[i + 1])])
-        applicationList.append(app)
-        line = inputFile.readline()
-    inputFile.close()
-    return applicationList
+    applicationList = []  # Inicializamos una lista vacía para almacenar las aplicaciones
+    try:
+        with open('Applications.txt', 'r') as inputFile:  # Abre el archivo 'Applications.txt' en modo de lectura
+            for line in inputFile:  # Itera sobre cada línea en el archivo
+                elementsList = line.split(', ')
+                if len(elementsList) >= 2:  # Verifica si la línea tiene al menos dos elementos
+                    app = Application()  # Crea una nueva instancia de Application
+                    app.appId = elementsList[0]  # Asigna el primer elemento como ID de la aplicación
+                    app.data = []  # Inicializa una lista para almacenar los datos de la aplicación
+                    for i in range(1, len(elementsList), 2):  # Itera sobre los elementos restantes en la línea
+                        app.data.append([elementsList[i], int(elementsList[i + 1])])  # Agrega los datos a la lista
+                    applicationList.append(app)  # Agrega la aplicación a la lista de aplicaciones
+    except FileNotFoundError:
+        print("Error: File 'Applications.txt' not found.")
+    return applicationList  # Devuelve la lista de aplicaciones
 
 
 def applyRules(rules, inputs):
@@ -140,20 +141,16 @@ def main():
     rules = readRulesFile('Rules.txt')
 
     # Procesar las solicitudes y obtener los resultados
-    open('Results.txt', 'w') as f:
-    for app in applications:
-        centroide = process_applications(app, rules)
-        f.write(app.id, centroide)
-    f.close()
-    # Escribir los resultados en un nuevo archivo
-    with open('Results.txt', 'w') as f:
-        for result in results:
-            f.write(f"Application ID: {result['App ID']}\n")
-            f.write(f"Risk: {result}")
-            for rule_name, matched in result['Matched Rules'].items():
-                if matched:
-                    f.write(f"- Rule {rule_name}: Activated\n")
-            f.write("\n")
+    with open('Results.txt', 'w') as f:  # Abre el archivo 'Results.txt' en modo de escritura
+        for app in applications:  # Itera sobre cada solicitud en la lista de aplicaciones
+            results = process_applications([app], rules)  # Pasamos la aplicación como una lista
+            for result in results:
+                f.write(f"Application ID: {result['App ID']}\n")
+                f.write(f"Risk: {result['Matched Rules']}\n")
+                for rule_name, matched in result['Matched Rules'].items():
+                    if matched:
+                        f.write(f"- Rule {rule_name}: Activated\n")
+                f.write("\n")
 
 
 if __name__ == '__main__':

@@ -13,12 +13,6 @@ class FuzzySet:
         self.y = []
 
 
-class FuzzySetsDict(dict):
-    def printFuzzySetsDict(self):
-        for var_set, value in self.items():
-            print(f"Set ID: {var_set} - Var: {value.var} - Label: {value.label} - X: {value.x} - Y: {value.y}")
-
-
 class Rule:
     def __init__(self):
         self.ruleName = ""
@@ -114,7 +108,8 @@ def applyRules(rules, inputs):
         match = True
         for antecedent in rule.antecedent:
             var, value = antecedent.split('=')
-            if inputs.get(var) != str(value):  # Corregimos aquí para comparar strings
+            print(f"Comparing input value: {inputs.get(var)} with rule condition: {value}")
+            if inputs.get(var) != str(value):
                 match = False
                 break
         if match:

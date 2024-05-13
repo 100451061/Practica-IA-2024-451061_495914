@@ -22,9 +22,30 @@ class Test(unittest.TestCase):
             'Amount': {'Small': 0.0, 'Medium': 0.0, 'Big': 0.0, 'VeryBig': 1.0},
             'Job': {'Unstable': 1.0, 'Stable': 0.0},
             'History': {'Poor': 1.0, 'Standard': 0.0, 'Good': 0.0}
-        } # No he comprobado si esto esta bien
+        }
         resultado = borrosificacion(aplicacion, list(readFuzzySetsFile(FICHERO_INPUTVAR).values()))
         self.assertEqual(esperado, resultado)
+
+    def test_evaluacion_de_reglas(self):
+        aplicacion_borrosificada = { 
+                'app_id': '0001',
+                'Age': {'Young': 0.5, 'Adult': 1.0, 'Elder': 0.0},
+                'IncomeLevel': {'Low': 0.0, 'Med': 0.0, 'Hig': 1.0},
+                'Assets': {'Scarce': 0.0, 'Moderate': 0.0, 'Abundant': 1.0},
+                'Amount': {'Small': 0.0, 'Medium': 0.0, 'Big': 0.0, 'VeryBig': 1.0},
+                'Job': {'Unstable': 1.0, 'Stable': 0.0},
+                'History': {'Poor': 1.0, 'Standard': 0.0, 'Good': 0.0}
+            }
+        reglas = lectura.readRulesFile(FICHERO_REGLAS)
+        reglas = evaluacion_de_reglas(aplicacion_borrosificada, reglas)
+        resultado = {}
+        for i in reglas:
+            resultado[i.rule_name] = i.strength
+
+        self.assertEqual(resultado["Rule24"], 0.5)
+        self.assertEqual(resultado["Rule25"], 0.5)
+        self.assertEqual(resultado["Rule26"], 0.5)
+
 
 if __name__ == '__main__':
     unittest.main()

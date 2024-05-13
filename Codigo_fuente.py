@@ -4,6 +4,7 @@ import MFIS_Read_Functions as lectura
 import skfuzzy as skf
 import numpy
 from pathlib import Path
+import copy
 
 # Constantes
 
@@ -23,6 +24,8 @@ def escribir_resultado(archivo: Path, resultados: list[dict]):
             outputFile.write(string_de_escritura)
 
 
+
+
 def borrosificacion(aplicacion: Application, lista_varset = list[FuzzySet]) -> dict:
     aplicacion_borrosificada = {
         "app_id": aplicacion.app_id
@@ -36,16 +39,23 @@ def borrosificacion(aplicacion: Application, lista_varset = list[FuzzySet]) -> d
                 aplicacion_borrosificada[variable][varset.label] = skf.interp_membership(varset.x, varset.y, valor)
     return aplicacion_borrosificada
 
+def evaluacion_de_reglas(aplicacion_borrosificada: dict, reglas: list[Rule]) -> list[Rule]:
+    for regla in reglas:
+        valores_antecedentes = []
+        for antecedente in regla.antecedents:
+            s = antecedente.split('=')
+            variable, conjunto = s[0], s[1]
+            valores_antecedentes.append(aplicacion_borrosificada[variable][conjunto])
+        regla.strength = min(valores_antecedentes)
+    return reglas
+
+
 def main():
     aplicaciones = lectura.readApplicationsFile(FICHERO_APLICACIONES)
     inputvar = list(lectura.readFuzzySetsFile(FICHERO_INPUTVAR).values())
     reglas = lectura.readRulesFile(FICHERO_RIESGOS)
-    print(inputvar)
     for aplicacion in aplicaciones:
-        try:
-            aplicacion_borrosificada = borrosificacion(aplicacion)
-        except:
-            continue
+        aplicacion_borrosificada = borrosificacion(aplicacion)
 
 if __name__ == '__main__':
     main()

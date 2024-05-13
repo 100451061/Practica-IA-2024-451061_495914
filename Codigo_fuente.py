@@ -9,23 +9,21 @@ import matplotlib.pyplot as plt
 
 # Constantes
 
-FICHERO_APLICACIONES = Path('./Applications.txt')
+FICHERO_APLICACIONES = Path('./AppTest.txt')
 FICHERO_INPUTVAR = Path('./InputVarSets.txt')
 FICHERO_RESULTADOS = Path('./Resultados.txt')
 FICHERO_RIESGOS = Path('./Risks.txt')
 FICHERO_REGLAS = Path('./Rules.txt')
+DIRECTORIO_PLOTS = Path('./plots')
 
 def escribir_resultado(archivo: Path, resultados: list[dict]):
     # Escribe el resultado en un fichero
     with open(archivo, "w") as outputFile:
-        for application in resultados:
-            string_de_escritura = f"{application['app_id']}  {application['resultado']}\n"
+        for app_id, centroide in resultados.items():
+            string_de_escritura = f"{app_id}  {centroide}\n"
             outputFile.write(string_de_escritura)
 
-
-
-
-def borrosificacion(aplicacion: Application, lista_varset: list[FuzzySet]) -> dict:
+def borrosificacion(aplicacion: Application, lista_varset: dict) -> dict:
     aplicacion_borrosificada = {
         "app_id": aplicacion.app_id
     }
@@ -33,13 +31,13 @@ def borrosificacion(aplicacion: Application, lista_varset: list[FuzzySet]) -> di
     for variable, valor in aplicacion.data:
         aplicacion_borrosificada[variable] = {}
         # Busco las varset correspondientes
-        for varset in lista_varset:
+        for varset in lista_varset.values():
             if varset.variable == variable:
                 aplicacion_borrosificada[variable][varset.label] = skf.interp_membership(varset.x, varset.y, valor)
     return aplicacion_borrosificada
 
-def evaluacion_de_reglas(aplicacion_borrosificada: dict, reglas: list[Rule]) -> list[Rule]:
-    for regla in reglas:
+def evaluacion_de_reglas(aplicacion_borrosificada: dict, reglas: dict) -> dict:
+    for regla in reglas.values():
         valores_antecedentes = []
         for antecedente in regla.antecedents:
             s = antecedente.split('=')
@@ -48,12 +46,12 @@ def evaluacion_de_reglas(aplicacion_borrosificada: dict, reglas: list[Rule]) -> 
         regla.strength = min(valores_antecedentes)
     return reglas
 
-def calculo_de_consecuente(riesgos: dict[FuzzySet], reglas: list[Rule]) -> tuple[dict]:
+def calculo_de_consecuente(riesgos: dict, reglas: dict) -> tuple[dict]:
     # Calculo de activaciones
     activacion_riskL = 0
     activacion_riskM = 0
     activacion_riskH = 0
-    for regla in reglas:
+    for regla in reglas.values():
         s = regla.consequent.split('=')
         tipo_riesgo = s[1]
         match tipo_riesgo:
@@ -65,16 +63,16 @@ def calculo_de_consecuente(riesgos: dict[FuzzySet], reglas: list[Rule]) -> tuple
                 activacion_riskH = max(regla.strength, activacion_riskH)
     # Recorte de funciones
     riesgoL_ajustado = {
-        "x" : riesgos['Risk=LowR'].x,
-        "y" : numpy.clip(riesgos['Risk=LowR'].y, 0, activacion_riskL)
+        "x" : riesgos['LowR'].x,
+        "y" : numpy.clip(riesgos['LowR'].y, 0, activacion_riskL)
     }
     riesgoM_ajustado = {
-        "x" : riesgos['Risk=MediumR'].x,
-        "y" : numpy.clip(riesgos['Risk=MediumR'].y, 0, activacion_riskM)
+        "x" : riesgos['MediumR'].x,
+        "y" : numpy.clip(riesgos['MediumR'].y, 0, activacion_riskM)
     }
     riesgoL_ajustado = {
-        "x" : riesgos['Risk=HighR'].x,
-        "y" : numpy.clip(riesgos['Risk=HighR'].y, 0, activacion_riskH)
+        "x" : riesgos['HighR'].x,
+        "y" : numpy.clip(riesgos['HighR'].y, 0, activacion_riskH)
     }
     return (riesgoL_ajustado, riesgoM_ajustado, riesgoL_ajustado)
 
@@ -83,7 +81,7 @@ def composicion(funciones_riesgo: tuple[dict]) -> dict:
     # Nota: Asumo que todas las funciones de riesgo tienen el mismo rango de x (0, 100)
     funcion_agregada = {
         "x": funciones_riesgo[0]["x"],
-        "y": numpy.maximum(funciones_riesgo[0], numpy.maximum(funciones_riesgo[1], funciones_riesgo[2]))
+        "y": numpy.maximum(funciones_riesgo[0]["y"], numpy.maximum(funciones_riesgo[1]["y"], funciones_riesgo[2]["y"]))
     } 
     return funcion_agregada
 
@@ -91,31 +89,30 @@ def desborrosificacion(x: numpy.ndarray | list | tuple, y: numpy.ndarray | list 
     return skf.centroid(x, y)
 
 def imprimir_funcion(nombre: str, x: numpy.ndarray | list, y: numpy.ndarray | list, centroide: int) -> None:
+    plt.clf()
     plt.plot(x, y)
     plt.xlabel('X')
     plt.ylabel('Y')
     plt.title(nombre)
-    plt.figtext(0.5, 0.02, f'Centroide: {centroide}', ha='center')
-    plt.show()
+    plt.figtext(0.5, 0.0, f'Centroide: {centroide}', ha='center')
+    if not DIRECTORIO_PLOTS.exists():
+        DIRECTORIO_PLOTS.mkdir(exist_ok=True)
+    plt.savefig(DIRECTORIO_PLOTS / (nombre + '.svg'), format='svg')
 
 def main():
-    aplicaciones: list[Application] = lectura.readApplicationsFile(FICHERO_APLICACIONES)
-    inputvar: list[FuzzySet] = list(lectura.readFuzzySetsFile(FICHERO_INPUTVAR).values())
-    reglas: list[Rule] = lectura.readRulesFile(FICHERO_REGLAS)
-    riesgos: list[FuzzySet] = lectura.readRisksFile(FICHERO_RIESGOS, {})
-    resultados: list[dict] = []
-    for aplicacion in aplicaciones:
+    aplicaciones: dict = lectura.readApplicationsFile(FICHERO_APLICACIONES)
+    inputvar: dict = lectura.readFuzzySetsFile(FICHERO_INPUTVAR)
+    reglas: dict = lectura.readRulesFile(FICHERO_REGLAS)
+    riesgos: dict = lectura.readRisksFile(FICHERO_RIESGOS)
+    resultados: dict = {}
+    for aplicacion in aplicaciones.values():
         aplicacion_borrosificada = borrosificacion(aplicacion, inputvar)
         reglas = evaluacion_de_reglas(aplicacion_borrosificada, reglas)
         funciones_ajustadas = calculo_de_consecuente(riesgos, reglas)
         funcion_agregada = composicion(funciones_ajustadas)
-        centroide = desborrosificacion(funcion_agregada)
-        resultado = {
-            "app_id": aplicacion.app_id,
-            "centroide": centroide
-        }
+        centroide = desborrosificacion(funcion_agregada["x"], funcion_agregada["y"])
+        resultados[aplicacion.app_id] = centroide
         imprimir_funcion(aplicacion.app_id, funcion_agregada['x'], funcion_agregada['y'], centroide)
-        resultados.append(resultado)
     escribir_resultado(FICHERO_RESULTADOS, resultados)
 
 if __name__ == '__main__':

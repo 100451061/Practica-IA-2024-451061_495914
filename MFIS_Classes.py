@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-
+import numpy as np
 
 class FuzzySet:
-    def __init__(self, variable, label, x, y):
+    def __init__(self, variable: str, label: str, x: np.ndarray, y: np.ndarray):
         self.variable = variable  # Nombre de la variable, ej. 'Age', 'IncomeLevel'
         self.label = label  # Etiqueta del conjunto borroso, ej. 'Young', 'High'
         self.x = x  # Rango de valores de x (universo de discurso)
@@ -23,7 +23,7 @@ class FuzzySetsDict(dict):
 
 
 class Rule:
-    def __init__(self, rule_name, consequent, antecedents, strength=1.0):
+    def __init__(self, rule_name: str, consequent: str, antecedents: list[str], strength:float=1.0):
         self.rule_name = rule_name  # Name of the rule
         self.consequent = consequent  # Consequent of the rule (only one set ID)
         self.antecedents = antecedents  # List of antecedents (set IDs)
@@ -43,7 +43,7 @@ class RuleList(list):
 
 
 class Application:
-    def __init__(self, app_id, data):
+    def __init__(self, app_id: str, data: list[tuple[str, str]]):
         self.app_id = app_id  # Application identifier
         self.data = data  # List of (variable, value) pairs
 

@@ -1,10 +1,11 @@
 import numpy as np
 import skfuzzy as fuzz
+from pathlib import Path
 
 from MFIS_Classes import FuzzySet, Rule, Application
 
 
-def readFuzzySetsFile(fileName):
+def readFuzzySetsFile(fileName: str | Path) -> dict[str, FuzzySet]:
     fuzzySetsDict = {}
     with open(fileName, 'r') as file:
         for line in file:
@@ -28,22 +29,23 @@ def readFuzzySetsFile(fileName):
     return fuzzySetsDict
 
 
-def readRisksFile(fileName, variables):
+def readRisksFile(fileName: str | Path) -> dict[str, FuzzySet]:
+    variables = {}
     with open(fileName, 'r') as file:
         for line in file:
             parts = line.strip().split(', ')
-            risk_name = parts[0].split('=')[1]
+            risk_name = parts[0].split('=')
             xmin = int(parts[1])
             xmax = int(parts[2])
             points = list(map(int, parts[3:]))
             x = np.arange(xmin, xmax + 1)
             y = fuzz.trapmf(x, points)
-            variables[risk_name] = FuzzySet(risk_name[0], risk_name[1], x, y)  # Ajustado según la nueva definición
+            variables[risk_name[1]] = FuzzySet(risk_name[0], risk_name[1], x, y)  # Ajustado según la nueva definición
     return variables
 
 
-def readRulesFile(fileName):
-    rules = []
+def readRulesFile(fileName: str | Path) -> dict[str, Rule]:
+    rules = {}
     with open(fileName, 'r') as file:
         for line in file:
             elements = line.strip().split(', ')
@@ -51,17 +53,17 @@ def readRulesFile(fileName):
             consequent = elements[1]
             antecedents = elements[2:]
             rule = Rule(rule_name, consequent, antecedents)
-            rules.append(rule)
+            rules[rule_name] = rule
     return rules
 
 
-def readApplicationsFile(fileName):
-    applications = []
+def readApplicationsFile(fileName: str | Path) -> dict[str, Application]:
+    applications = {}
     with open(fileName, 'r') as file:
         for line in file:
             elements = line.strip().split(', ')
             app_id = elements[0]
             data = [(elements[i], int(elements[i + 1])) for i in range(1, len(elements), 2)]
             application = Application(app_id, data)
-            applications.append(application)
+            applications[app_id] = application
     return applications

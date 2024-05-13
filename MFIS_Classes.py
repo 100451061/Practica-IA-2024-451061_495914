@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import numpy as np
 
+
 class FuzzySet:
     def __init__(self, variable: str, label: str, x: np.ndarray, y: np.ndarray):
         self.variable = variable  # Nombre de la variable, ej. 'Age', 'IncomeLevel'
@@ -23,7 +24,7 @@ class FuzzySetsDict(dict):
 
 
 class Rule:
-    def __init__(self, rule_name: str, consequent: str, antecedents: list[str], strength:float=1.0):
+    def __init__(self, rule_name: str, consequent: str, antecedents: list[str], strength: float = 1.0):
         self.rule_name = rule_name  # Name of the rule
         self.consequent = consequent  # Consequent of the rule (only one set ID)
         self.antecedents = antecedents  # List of antecedents (set IDs)
@@ -37,6 +38,7 @@ class Rule:
 
     def __str__(self) -> str:
         return f"{self.rule_name}   {self.strength}"
+
 
 class RuleList(list):
     def printRuleList(self):

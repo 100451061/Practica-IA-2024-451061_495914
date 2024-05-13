@@ -1,11 +1,11 @@
-from MFIS_Classes import *
-import MFIS_Read_Functions as lectura
-
-import skfuzzy as skf
-import numpy
 from pathlib import Path
-import copy
+
 import matplotlib.pyplot as plt
+import numpy
+import skfuzzy as skf
+
+import MFIS_Read_Functions as lectura
+from MFIS_Classes import *
 
 # Constantes
 
@@ -16,12 +16,14 @@ FICHERO_RIESGOS = Path('./Risks.txt')
 FICHERO_REGLAS = Path('./Rules.txt')
 DIRECTORIO_PLOTS = Path('./plots')
 
+
 def escribir_resultado(archivo: Path, resultados: list[dict]):
     # Escribe el resultado en un fichero
     with open(archivo, "w") as outputFile:
         for app_id, centroide in resultados.items():
             string_de_escritura = f"{app_id}  {centroide}\n"
             outputFile.write(string_de_escritura)
+
 
 def borrosificacion(aplicacion: Application, lista_varset: dict) -> dict:
     aplicacion_borrosificada = {
@@ -36,6 +38,7 @@ def borrosificacion(aplicacion: Application, lista_varset: dict) -> dict:
                 aplicacion_borrosificada[variable][varset.label] = skf.interp_membership(varset.x, varset.y, valor)
     return aplicacion_borrosificada
 
+
 def evaluacion_de_reglas(aplicacion_borrosificada: dict, reglas: dict) -> dict:
     for regla in reglas.values():
         valores_antecedentes = []
@@ -45,6 +48,7 @@ def evaluacion_de_reglas(aplicacion_borrosificada: dict, reglas: dict) -> dict:
             valores_antecedentes.append(aplicacion_borrosificada[variable][conjunto])
         regla.strength = min(valores_antecedentes)
     return reglas
+
 
 def calculo_de_consecuente(riesgos: dict, reglas: dict) -> tuple[dict]:
     # Calculo de activaciones
@@ -63,18 +67,19 @@ def calculo_de_consecuente(riesgos: dict, reglas: dict) -> tuple[dict]:
                 activacion_riskH = max(regla.strength, activacion_riskH)
     # Recorte de funciones
     riesgoL_ajustado = {
-        "x" : riesgos['LowR'].x,
-        "y" : numpy.clip(riesgos['LowR'].y, 0, activacion_riskL)
+        "x": riesgos['LowR'].x,
+        "y": numpy.clip(riesgos['LowR'].y, 0, activacion_riskL)
     }
     riesgoM_ajustado = {
-        "x" : riesgos['MediumR'].x,
-        "y" : numpy.clip(riesgos['MediumR'].y, 0, activacion_riskM)
+        "x": riesgos['MediumR'].x,
+        "y": numpy.clip(riesgos['MediumR'].y, 0, activacion_riskM)
     }
     riesgoH_ajustado = {
-        "x" : riesgos['HighR'].x,
-        "y" : numpy.clip(riesgos['HighR'].y, 0, activacion_riskH)
+        "x": riesgos['HighR'].x,
+        "y": numpy.clip(riesgos['HighR'].y, 0, activacion_riskH)
     }
     return (riesgoL_ajustado, riesgoM_ajustado, riesgoH_ajustado)
+
 
 def composicion(funciones_riesgo: tuple[dict]) -> dict:
     # Agregacion
@@ -82,11 +87,13 @@ def composicion(funciones_riesgo: tuple[dict]) -> dict:
     funcion_agregada = {
         "x": funciones_riesgo[0]["x"],
         "y": numpy.maximum(funciones_riesgo[0]["y"], numpy.maximum(funciones_riesgo[1]["y"], funciones_riesgo[2]["y"]))
-    } 
+    }
     return funcion_agregada
+
 
 def desborrosificacion(x: numpy.ndarray | list | tuple, y: numpy.ndarray | list | tuple):
     return skf.centroid(x, y)
+
 
 def imprimir_funcion(nombre: str, x: numpy.ndarray | list, y: numpy.ndarray | list, centroide: int) -> None:
     plt.clf()
@@ -98,6 +105,7 @@ def imprimir_funcion(nombre: str, x: numpy.ndarray | list, y: numpy.ndarray | li
     if not DIRECTORIO_PLOTS.exists():
         DIRECTORIO_PLOTS.mkdir(exist_ok=True)
     plt.savefig(DIRECTORIO_PLOTS / (nombre + '.svg'), format='svg')
+
 
 def main():
     aplicaciones: dict = lectura.readApplicationsFile(FICHERO_APLICACIONES)
@@ -114,6 +122,7 @@ def main():
         resultados[aplicacion.app_id] = centroide
         imprimir_funcion(aplicacion.app_id, funcion_agregada['x'], funcion_agregada['y'], centroide)
     escribir_resultado(FICHERO_RESULTADOS, resultados)
+
 
 if __name__ == '__main__':
     main()

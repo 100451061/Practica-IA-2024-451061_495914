@@ -1,6 +1,7 @@
+from pathlib import Path
+
 import numpy as np
 import skfuzzy as fuzz
-from pathlib import Path
 
 from MFIS_Classes import FuzzySet, Rule, Application
 

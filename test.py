@@ -1,14 +1,15 @@
 import unittest
-from Codigo_fuente import *
-from MFIS_Classes import *
-from MFIS_Read_Functions import *
-import skfuzzy as skf
+
 from skfuzzy import control as ctrl
+
+from Codigo_fuente import *
+from MFIS_Read_Functions import *
+
 
 class Test(unittest.TestCase):
     @staticmethod
     def helper_esperado(aplicacion: Application) -> float:
-        list_set: dict[str, FuzzySet]  = lectura.readFuzzySetsFile(FICHERO_INPUTVAR)
+        list_set: dict[str, FuzzySet] = lectura.readFuzzySetsFile(FICHERO_INPUTVAR)
         procesadas = {}
         for set in list_set.values():
             if set.variable not in procesadas.keys():
@@ -38,7 +39,6 @@ class Test(unittest.TestCase):
             riesgo_output.input[datos[0]] = datos[1]
         riesgo_output.compute()
         return riesgo_output.output['Risk']
-
 
     def test(self):
         aplicaciones: dict = lectura.readApplicationsFile(FICHERO_APLICACIONES)

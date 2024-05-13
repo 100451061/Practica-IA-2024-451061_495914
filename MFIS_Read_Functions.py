@@ -38,7 +38,7 @@ def readRisksFile(fileName, variables):
             points = list(map(int, parts[3:]))
             x = np.arange(xmin, xmax + 1)
             y = fuzz.trapmf(x, points)
-            variables[risk_name] = FuzzySet(risk_name, x, y)  # Ajustado según la nueva definición
+            variables[risk_name] = FuzzySet(risk_name[0], risk_name[1], x, y)  # Ajustado según la nueva definición
     return variables
 
 

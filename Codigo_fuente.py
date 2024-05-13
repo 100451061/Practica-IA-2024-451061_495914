@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 # Constantes
 
-FICHERO_APLICACIONES = Path('./AppTest.txt')
+FICHERO_APLICACIONES = Path('./Applications.txt')
 FICHERO_INPUTVAR = Path('./InputVarSets.txt')
 FICHERO_RESULTADOS = Path('./Resultados.txt')
 FICHERO_RIESGOS = Path('./Risks.txt')
@@ -70,11 +70,11 @@ def calculo_de_consecuente(riesgos: dict, reglas: dict) -> tuple[dict]:
         "x" : riesgos['MediumR'].x,
         "y" : numpy.clip(riesgos['MediumR'].y, 0, activacion_riskM)
     }
-    riesgoL_ajustado = {
+    riesgoH_ajustado = {
         "x" : riesgos['HighR'].x,
         "y" : numpy.clip(riesgos['HighR'].y, 0, activacion_riskH)
     }
-    return (riesgoL_ajustado, riesgoM_ajustado, riesgoL_ajustado)
+    return (riesgoL_ajustado, riesgoM_ajustado, riesgoH_ajustado)
 
 def composicion(funciones_riesgo: tuple[dict]) -> dict:
     # Agregacion

@@ -2,60 +2,57 @@ import unittest
 from Codigo_fuente import *
 from MFIS_Classes import *
 from MFIS_Read_Functions import *
+import skfuzzy as skf
+from skfuzzy import control as ctrl
 
 class Test(unittest.TestCase):
-    def helper_borrosificacion(self, aplicacion: Application, esperado: dict):
-        resultado = borrosificacion(aplicacion, readFuzzySetsFile(FICHERO_INPUTVAR))
-        self.assertEqual(esperado, resultado)
-        return resultado
-    
-    def helper_evaluacion_reglas(self, aplicacion_borrosificada: dict, esperado: dict):
-        reglas = lectura.readRulesFile(FICHERO_REGLAS)
-        reglas = evaluacion_de_reglas(aplicacion_borrosificada, reglas)
-        resultado = {}
-        for i in reglas.values():
-            resultado[i.rule_name] = i.strength
-        for regla in reglas.values():
-            try:
-                if regla.rule_name in esperado.keys():
-                    self.assertEqual(resultado[regla.rule_name], esperado[regla.rule_name])
+    @staticmethod
+    def helper_esperado(aplicacion: Application) -> float:
+        list_set: dict[str, FuzzySet]  = lectura.readFuzzySetsFile(FICHERO_INPUTVAR)
+        procesadas = {}
+        for set in list_set.values():
+            if set.variable not in procesadas.keys():
+                procesadas[set.variable] = ctrl.Antecedent(set.x, set.variable)
+        for set in list_set.values():
+            procesadas[set.variable][set.label] = set.y
+        riesgos = lectura.readRisksFile(FICHERO_RIESGOS)
+        for nombre, riesgo in riesgos.items():
+            if riesgo.variable not in procesadas.keys():
+                procesadas[riesgo.variable] = ctrl.Consequent(riesgo.x, riesgo.variable)
+            procesadas[riesgo.variable][nombre] = riesgo.y
+        reglas: dict[str, Rule] = lectura.readRulesFile(FICHERO_REGLAS)
+        reglas_procesadas = {}
+        for nombre, regla in reglas.items():
+            consecuente = regla.consequent.split('=')
+            antecedentes = None
+            for antecedente in regla.antecedents:
+                s = antecedente.split("=")
+                if not antecedentes:
+                    antecedentes = procesadas[s[0]][s[1]]
                 else:
-                    self.assertEqual(resultado[regla.rule_name], 0)
-            except AssertionError as e:
-                print(f"{regla.rule_name}")
-                raise 
-        return reglas
+                    antecedentes &= procesadas[s[0]][s[1]]
+            reglas_procesadas[nombre] = ctrl.Rule(antecedentes, procesadas[consecuente[0]][consecuente[1]])
+        riesgo_ctrl = ctrl.ControlSystem(reglas_procesadas.values())
+        riesgo_output = ctrl.ControlSystemSimulation(riesgo_ctrl)
+        for datos in aplicacion.data:
+            riesgo_output.input[datos[0]] = datos[1]
+        riesgo_output.compute()
+        return riesgo_output.output['Risk']
+
 
     def test(self):
-        datos_testeo = {
-            "0001": { 
-                "iniciales": [
-                    ("Age", "35"),
-                    ("IncomeLevel", "82"),
-                    ("Assets", "38"),
-                    ("Amount", "8"),
-                    ("Job", "0"),
-                    ("History", "1")
-                    ],
-                "borrosificado": { 
-                    'app_id': '0001',
-                    'Age': {'Young': 0.5, 'Adult': 1.0, 'Elder': 0.0},
-                    'IncomeLevel': {'Low': 0.0, 'Med': 0.0, 'Hig': 1.0},
-                    'Assets': {'Scarce': 0.0, 'Moderate': 0.0, 'Abundant': 1.0},
-                    'Amount': {'Small': 0.0, 'Medium': 0.0, 'Big': 0.0, 'VeryBig': 1.0},
-                    'Job': {'Unstable': 1.0, 'Stable': 0.0},
-                    'History': {'Poor': 1.0, 'Standard': 0.0, 'Good': 0.0}
-                },
-                "reglas": {"Rule24": 0.5,
-                           "Rule25": 0.5,
-                           "Rule26": 0.5}
-            }
-        }
-        for id, datos in datos_testeo.items():
-            aplicacion = Application(id, datos["iniciales"])
-            borrosificado = self.helper_borrosificacion(aplicacion, datos["borrosificado"])
-            reglas = self.helper_evaluacion_reglas(borrosificado, datos["reglas"])
-
+        aplicaciones: dict = lectura.readApplicationsFile(FICHERO_APLICACIONES)
+        inputvar: dict = lectura.readFuzzySetsFile(FICHERO_INPUTVAR)
+        reglas: dict = lectura.readRulesFile(FICHERO_REGLAS)
+        riesgos: dict = lectura.readRisksFile(FICHERO_RIESGOS)
+        for aplicacion in aplicaciones.values():
+            aplicacion_borrosificada = borrosificacion(aplicacion, inputvar)
+            reglas = evaluacion_de_reglas(aplicacion_borrosificada, reglas)
+            funciones_ajustadas = calculo_de_consecuente(riesgos, reglas)
+            funcion_agregada = composicion(funciones_ajustadas)
+            centroide = desborrosificacion(funcion_agregada["x"], funcion_agregada["y"])
+            # Los resultados difieren en algunas centesimas a veces
+            self.assertEqual(round(self.helper_esperado(aplicacion), 1), round(centroide, 1))
 
 
 if __name__ == '__main__':

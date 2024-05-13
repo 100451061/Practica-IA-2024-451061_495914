@@ -35,6 +35,8 @@ class Rule:
         print("THEN      ", self.consequent)
         print("Strength: ", self.strength)
 
+    def __str__(self) -> str:
+        return f"{self.rule_name}   {self.strength}"
 
 class RuleList(list):
     def printRuleList(self):

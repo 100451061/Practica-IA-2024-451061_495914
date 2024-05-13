@@ -1,1 +1,0 @@
-0002, Age, 24, IncomeLevel, 83, Assets, 23, Amount, 4, Job, 5, History, 6

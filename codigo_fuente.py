@@ -26,9 +26,7 @@ def escribir_resultado(archivo: Path, resultados: list[dict]):
 
 
 def borrosificacion(aplicacion: Application, lista_varset: dict) -> dict:
-    aplicacion_borrosificada = {
-        "app_id": aplicacion.app_id
-    }
+    aplicacion_borrosificada = {"app_id": aplicacion.app_id}
     # Itero por las variables de la aplicacion
     for variable, valor in aplicacion.data:
         aplicacion_borrosificada[variable] = {}
@@ -65,29 +63,22 @@ def calculo_de_consecuente(riesgos: dict, reglas: dict) -> tuple[dict]:
                 activacion_riskM = max(regla.strength, activacion_riskM)
             case 'HighR':
                 activacion_riskH = max(regla.strength, activacion_riskH)
+
     # Recorte de funciones
-    riesgoL_ajustado = {
-        "x": riesgos['LowR'].x,
-        "y": numpy.clip(riesgos['LowR'].y, 0, activacion_riskL)
-    }
-    riesgoM_ajustado = {
-        "x": riesgos['MediumR'].x,
-        "y": numpy.clip(riesgos['MediumR'].y, 0, activacion_riskM)
-    }
-    riesgoH_ajustado = {
-        "x": riesgos['HighR'].x,
-        "y": numpy.clip(riesgos['HighR'].y, 0, activacion_riskH)
-    }
+    riesgoL_ajustado = {"x": riesgos['LowR'].x,
+                        "y": numpy.clip(riesgos['LowR'].y, 0, activacion_riskL)}
+    riesgoM_ajustado = {"x": riesgos['MediumR'].x,
+                        "y": numpy.clip(riesgos['MediumR'].y, 0, activacion_riskM)}
+    riesgoH_ajustado = {"x": riesgos['HighR'].x,
+                        "y": numpy.clip(riesgos['HighR'].y, 0, activacion_riskH)}
     return (riesgoL_ajustado, riesgoM_ajustado, riesgoH_ajustado)
 
 
 def composicion(funciones_riesgo: tuple[dict]) -> dict:
     # Agregacion
     # Nota: Asumo que todas las funciones de riesgo tienen el mismo rango de x (0, 100)
-    funcion_agregada = {
-        "x": funciones_riesgo[0]["x"],
-        "y": numpy.maximum(funciones_riesgo[0]["y"], numpy.maximum(funciones_riesgo[1]["y"], funciones_riesgo[2]["y"]))
-    }
+    funcion_agregada = {"x": funciones_riesgo[0]["x"],
+                        "y": numpy.maximum(funciones_riesgo[0]["y"], numpy.maximum(funciones_riesgo[1]["y"], funciones_riesgo[2]["y"]))}
     return funcion_agregada
 
 

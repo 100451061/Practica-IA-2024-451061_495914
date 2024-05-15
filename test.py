@@ -3,7 +3,6 @@ import unittest
 from skfuzzy import control as ctrl
 
 from codigo_fuente import *
-from MFIS_Read_Functions import *
 
 
 class Test(unittest.TestCase):

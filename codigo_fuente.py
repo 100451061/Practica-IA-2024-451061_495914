@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import numpy
 import skfuzzy as skf
 
-import MFIS_Read_Functions as lectura
-from MFIS_Classes import *
+import MFIS_Read_Functions_Modificado as lectura
+from MFIS_Classes_Modificado import *
 
 # Constantes
 

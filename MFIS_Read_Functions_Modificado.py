@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 import skfuzzy as fuzz
 
-from MFIS_Classes import FuzzySet, Rule, Application
+from MFIS_Classes_Modificado import FuzzySet, Rule, Application
 
 
 def readFuzzySetsFile(fileName: str | Path) -> dict[str, FuzzySet]:

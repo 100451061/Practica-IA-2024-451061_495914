@@ -24,7 +24,13 @@ class FuzzySetsDict(dict):
 
 
 class Rule:
-    def __init__(self, rule_name: str, consequent: str, antecedents: list[str], strength: float = 1.0):
+    def __init__(
+        self,
+        rule_name: str,
+        consequent: str,
+        antecedents: list[str],
+        strength: float = 1.0,
+    ):
         self.rule_name = rule_name  # Name of the rule
         self.consequent = consequent  # Consequent of the rule (only one set ID)
         self.antecedents = antecedents  # List of antecedents (set IDs)

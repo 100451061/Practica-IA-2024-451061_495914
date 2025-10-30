@@ -7,14 +7,21 @@ import skfuzzy as skf
 import MFIS_Read_Functions_Modificado as lectura
 from MFIS_Classes_Modificado import *
 
+# Directorio base
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+
 # Constantes
 
-FICHERO_APLICACIONES = Path('./Applications.txt')
-FICHERO_INPUTVAR = Path('./InputVarSets.txt')
-FICHERO_RESULTADOS = Path('./Resultados.txt')
-FICHERO_RIESGOS = Path('./Risks.txt')
-FICHERO_REGLAS = Path('./Rules.txt')
-DIRECTORIO_PLOTS = Path('./plots')
+# Archivos de datos dentro de /data
+FICHERO_APLICACIONES = BASE_DIR / 'data' / 'Applications.txt'
+FICHERO_INPUTVAR = BASE_DIR / 'data' / 'InputVarSets.txt'
+FICHERO_RESULTADOS = BASE_DIR / 'data' / 'Resultados.txt'
+FICHERO_RIESGOS = BASE_DIR / 'data' / 'Risks.txt'
+FICHERO_REGLAS = BASE_DIR / 'data' / 'Rules.txt'
+
+# Carpeta para los gráficos
+DIRECTORIO_PLOTS = BASE_DIR / 'plots'
 
 
 def escribir_resultado(archivo: Path, resultados: list[dict]):

@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 # Añadimos la ruta de src/ al path
-sys.path.append(str(Path(__file__).resolve().parent.parent / 'src'))
+sys.path.append(str(Path(__file__).resolve().parent.parent / "src"))
 
 import unittest
 from skfuzzy import control as ctrl
@@ -28,7 +28,7 @@ class Test(unittest.TestCase):
         reglas: dict[str, Rule] = lectura.readRulesFile(FICHERO_REGLAS)
         reglas_procesadas = {}
         for nombre, regla in reglas.items():
-            consecuente = regla.consequent.split('=')
+            consecuente = regla.consequent.split("=")
             antecedentes = None
             for antecedente in regla.antecedents:
                 s = antecedente.split("=")
@@ -36,13 +36,15 @@ class Test(unittest.TestCase):
                     antecedentes = procesadas[s[0]][s[1]]
                 else:
                     antecedentes &= procesadas[s[0]][s[1]]
-            reglas_procesadas[nombre] = ctrl.Rule(antecedentes, procesadas[consecuente[0]][consecuente[1]])
+            reglas_procesadas[nombre] = ctrl.Rule(
+                antecedentes, procesadas[consecuente[0]][consecuente[1]]
+            )
         riesgo_ctrl = ctrl.ControlSystem(reglas_procesadas.values())
         riesgo_output = ctrl.ControlSystemSimulation(riesgo_ctrl)
         for datos in aplicacion.data:
             riesgo_output.input[datos[0]] = datos[1]
         riesgo_output.compute()
-        return riesgo_output.output['Risk']
+        return riesgo_output.output["Risk"]
 
     def test(self):
         aplicaciones: dict = lectura.readApplicationsFile(FICHERO_APLICACIONES)
@@ -56,8 +58,10 @@ class Test(unittest.TestCase):
             funcion_agregada = composicion(funciones_ajustadas)
             centroide = desborrosificacion(funcion_agregada["x"], funcion_agregada["y"])
             # Los resultados difieren en algunas centesimas a veces
-            self.assertEqual(round(self.helper_esperado(aplicacion), 1), round(centroide, 1))
+            self.assertEqual(
+                round(self.helper_esperado(aplicacion), 1), round(centroide, 1)
+            )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

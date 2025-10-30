@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
+import sys
+from pathlib import Path
+
+# Añadimos la ruta de src/ al path
+sys.path.append(str(Path(__file__).resolve().parent.parent / 'src'))
+
 import unittest
-
 from skfuzzy import control as ctrl
-
 from codigo_fuente import *
 
 
